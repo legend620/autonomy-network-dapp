@@ -26,9 +26,10 @@ export default function Home() {
       EthSenderABI,
       library.getSigner(),
     )
+    const unixTime = Math.round(new Date().getTime() / 1000)
     const callData = ethSenderContract.interface.encodeFunctionData(
       'sendEthAtTime',
-      [Date.now() + parseInt(timeout) * 60, userAddress],
+      [unixTime + parseInt(timeout) * 60, userAddress],
     )
 
     const registryContract = new Contract(
@@ -44,14 +45,11 @@ export default function Home() {
           ETH_SENDER_ADDRESS,
           AddressZero,
           callData,
-          parseEther(amount.toString()),
+          parseEther(ethAmount),
           false,
           false,
           false,
-          {
-            gasPrice: 1000000000000,
-            gasLimit: 850000,
-          },
+          { value: parseEther(amount.toString()) },
         )
         .then((tx) => tx.wait())
 
